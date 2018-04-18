@@ -5,18 +5,7 @@ String[] serverUrls = {
   //"<url>[,<token>]"
   //For ex. (secured server): "http://myserver.mycompany.com/arcgis/rest/services,ayn2C2iPvqjeqWoXwV6rjmr43kyo23mhIPnXz2CEiMA6rVu0xR0St8gKsd0olv8a"
   //For ex. (non-secured server): "http://sampleserver1.arcgisonline.com/arcgis/rest/services"
-  "http://sampleserver1.arcgisonline.com/arcgis/rest/services",
-  "http://beta.arcgisonline.cn/",
-  "https://open.t.qq.com/api/search",
-  "http://api.weibo.com/oauth2/access_token",
-  "http://www.weather.com.cn/data/",
-  "http://m.weather.com.cn/data/",
-  "http://tm.arcgisonline.cn:8038/arcgis/",
-  "http://192.168.120.103:8080/ImageManagerService/",
-  "http://map.geoq.cn/",
-  "https://rongc.arcgislocal.com/",
-  "https://esri.cjw/",
-  "http://sampleserver2.arcgisonline.com/arcgis/rest/services" //NOTE - no comma after the last item
+  "http://sampleserver1.arcgisonline.com/arcgis/rest/services"
 };
 %>
 <%
