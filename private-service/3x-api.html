@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+  <title>3.x API 私有图层测试</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.23/esri/css/esri.css">
+
+  <script src="https://js.arcgis.com/3.23/"></script>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      font-family: Avenir Next W00;
+      font-size: 14px;
+      width: 100%;
+      height: 100%;
+      margin: 0px;
+      padding: 0px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+
+  <script>
+    require([
+      'esri/config',
+      'esri/request',
+      'esri/arcgis/Portal',
+      'esri/IdentityManager',
+      'esri/map',
+      'esri/layers/ArcGISDynamicMapServiceLayer',
+
+      'dojo/dom',
+      'dojo/domReady!'
+    ], function (
+      esriConfig,
+      esriRequest,
+      arcgisPortal,
+      esriId,
+      Map,
+      ArcGISDynamicMapServiceLayer,
+      dom) {
+        var portalUrl = 'https://www.arcgis.com/sharing';
+        esriConfig.defaults.io.proxyUrl = './proxy/proxy.jsp';
+
+        getTokenFromPortal();
+
+        function getTokenFromPortal() {
+          var host = window.location.host
+          var pathRegex = new RegExp(/\/[^/]+$/)
+          var locationPath = window.location.pathname.replace(pathRegex, '')
+          var rootPath = host + locationPath
+
+          var data = {
+            username: '',
+            password: '',
+            client: 'referer',
+            referer: rootPath,
+            f: 'json'
+          }
+          // 为防止用户名密码泄露，此方法请用后端代码实现，然后前端请求自己后端获取 token
+          esriRequest({
+            url: portalUrl + '/rest/generateToken',
+            content: data
+          }, {
+              usePost: true
+            }).then(function (response) {
+              var token = response.token;
+
+              esriId.registerToken({
+                server: portalUrl,
+                token: token
+              });
+              displayMap();
+            }, function (err) {
+              console.log(err);
+            });
+        }
+
+        function displayMap() {
+          var portal = new arcgisPortal.Portal(portalUrl);
+
+          portal.signIn().then(function () {
+            var map = new Map('viewDiv');
+
+            var baseLayer = new ArcGISDynamicMapServiceLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer');
+            map.addLayer(baseLayer);
+
+            var privateLayer = new ArcGISDynamicMapServiceLayer('http://traffic.arcgis.com/arcgis/rest/services/World/Traffic/MapServer')
+            map.addLayer(privateLayer);
+          }, function (err) {
+            console.log(err);
+
+            if (err.message === 'Invalid token.') {
+              getTokenFromPortal();
+            }
+          });
+        }
+      }
+    );
+  </script>
+</body>
+
+</html>
